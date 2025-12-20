@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>BMSK Sensor Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="../static/css/style.css">
+
+</head>
+
+<body>
+
+    <div class="navbar">BMSK STATION DASHBOARD</div>
+
+    <div class="dashboard">
+        
+        <!-- MAP -->
+        <div class="card">
+            <div class="map-strip">
+                <label>Status:</label>
+                <select id="statusFilter">
+                    <option value="Not Working">Not Working</option>
+                    <option value="Working">Working</option>
+                    <option value="All">All</option>
+                </select>
+            </div>
+            <div id="map"></div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="card top-controls">
+
+            <div class="btnDateCont">
+                <div>
+                    <button id="awsBtn" class="btn-primary">AWS</button>
+                    <button id="argBtn" class="btn-outline">ARG</button>
+                </div>
+                <input type="date" id="datePicker">
+            </div>
+
+            <div class="summary">
+                <div class="summary-box bg-success">
+                    <h4>WORKING : <span id="working">0</span></h4>
+                </div>
+                <div class="summary-box bg-danger">
+                    <h4>NOT WORKING : <span id="not-working"></span></h4>
+                </div>
+            </div>
+
+            <!-- COMPANY TABLE -->
+            <div class="card">
+                <h3 style="text-align:center">Vender-wise Station Summary</h3>
+                <table id="companyTable" border="1">
+                    <thead style="background:#0b2c4d;color:white">
+                        <tr>
+                            <th>Vender</th>
+                            <th>Total</th>
+                            <th>Working</th>
+                            <th>Not Working</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="../static/script/script.js"></script>
+
+</body>
+
+</html>
