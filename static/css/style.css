@@ -1,21 +1,90 @@
+/* ================= BASE ================= */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: #f4f6f8;
 }
 
+
+/* ===== NAVBAR ===== */
 .navbar {
-    background: #0b2c4d;
-    color: white;
-    padding: 14px;
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
+    width: 100%;
+    height: 70px;
+    background: linear-gradient(90deg, #0097b2, #134b7f);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
+/* Container */
+.navElement {
+    width: 98%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logos */
+.logo_bihar img,
+.logo_bmsk img {
+    height: 45px;
+    width: auto;
+    border-radius: 2px;
+}
+
+.logo_bihar {
+    margin-right: 15px;
+}
+
+.logo_bmsk {
+    margin-right: 15px;
+}
+
+/* Title */
+.navHead {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.station_dash_head{
+     position: relative;
+    left: -13rem;
+    right: 18rem;
+    top: 1.5rem;
+    color: white;
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        height: 60px;
+    }
+
+    .logo_bihar img,
+    .logo_bmsk img {
+        height: 38px;
+    }
+
+    .navHead {
+        font-size: 16px;
+    }
+}
+
+/* ================= DASHBOARD ================= */
 .dashboard {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 2.2fr 1fr;
     gap: 15px;
     padding: 15px;
 }
@@ -23,13 +92,26 @@ body {
 .card {
     background: white;
     border-radius: 10px;
-    padding: 8px;
-    box-shadow: 0 4px 10px rgba(94, 91, 91, 0.663);
-
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+    height: 85vh;
 }
 
+.card-pie {
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    /* horizontal center */
+    align-items: center;
+}
+
+/* ================= MAP ================= */
 #map {
-    height: 350px;
+    height: 77vh;
     border-radius: 10px;
 }
 
@@ -38,33 +120,76 @@ body {
     margin-bottom: 8px;
 }
 
-#statusFilter,
-#datePicker {
-    border: 1px solid #0d6efd;
-    border-radius: 5px;
-    text-align: center;
-    height: 2rem;
-    background: #0b2c4db7;
-    color: white;
-    cursor: pointer;
+/* ================= STATUS FILTER (PRO) ================= */
+
+.map-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #5ec7cc4d;
+    border-radius: 8px;
+    /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); */
+    margin-bottom: 10px;
+}
+
+.filter-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #134b7f;
+}
+
+/* custom select */
+.select-wrapper {
+    position: relative;
 }
 
 #statusFilter {
-    width: 15rem;
+    appearance: none;
+    -moz-appearance: none;
+    padding: 6px 32px 6px 14px;
+    height: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    /* border: 1px solid #0b2c4d; */
+    background:white;
+    color: black;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    text-decoration: none;
 }
 
-#datePicker {
+#statusFilter {
     width: 10rem;
 }
 
-/* Date icon styling */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    filter: invert(1);
-    opacity: 1;
-    font-size: 1.5rem;
+/* hover & focus */
+#statusFilter:hover {
+    border-color: #0d6efd;
 }
 
+#statusFilter:focus {
+
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, .25);
+}
+
+/* arrow */
+.select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: #0b2c4d;
+    pointer-events: none;
+}
+
+
+/* ================= CONTROLS ================= */
 .top-controls {
     display: flex;
     flex-direction: column;
@@ -75,8 +200,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    gap: 5rem;
-    align-content: center;
 }
 
 button {
@@ -88,86 +211,332 @@ button {
 }
 
 .btn-primary {
-    background: #0d6efd;
-    color: white;
+    background: #0097b2;
+    color: #fff;
 }
 
 .btn-outline {
-    background: white;
+    background: #fff;
     border: 1px solid #ccc;
 }
 
+/* ================= INPUT ================= */
+
+#datePicker {
+    appearance: none;
+    -moz-appearance: none;
+    padding: 6px 13px 6px 0px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    border:none;
+    background: white;
+    color: black;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    outline:invert;
+}
+
+#datePicker {
+    width: 8rem;
+}
+
+/* ================= SUMMARY ================= */
 .summary {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .summary-box {
     flex: 1;
-    padding: 0px;
-    color: white;
+    color: #fff;
     border-radius: 8px;
     text-align: center;
 }
 
 .bg-success {
-    background: #2a5a44;
+    background: rgb(64, 148, 184);
 }
 
 .bg-danger {
-    background: #d4616c;
+    background: red;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 14px;
-    border: none;
-}
-
-th,
-td {
-    padding: 8px;
-    text-align: center;
-}
-
-tbody tr:nth-child(even) {
-    background: #f2f2f2;
-}
-
-.blink-green {
-    animation: greenBlink 1s infinite;
-}
 
 .blink-red {
     animation: redBlink 1s infinite;
 }
 
-@keyframes greenBlink {
-    0% {
-        fill: green
-    }
 
-    50% {
-        fill: #7CFC00
-    }
-
-    100% {
-        fill: green
-    }
-}
 
 @keyframes redBlink {
     0% {
-        fill: red
+        fill: red;
+        opacity: 1;
     }
 
     50% {
-        fill: #ff9999
+        fill: #ff9999;
+        opacity: .4;
     }
 
     100% {
-        fill: red
+        fill: red;
+        opacity: 1;
     }
 }
+
+/* ================= TABLE ================= */
+#vendorTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+#vendorTable th,
+#vendorTable td {
+    padding: 8px;
+    text-align: center;
+}
+
+#vendorTable tbody tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+/* kklkl */
+
+/* MAP BOTTOM CONTAINER */
+.map-bottom-panel {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* CARD */
+.panel-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  display: flex;
+  flex-direction: column;
+  height: 320px;
+}
+
+/* HEADER */
+.panel-header {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.panel-header h4 {
+  margin: 0;
+  font-size: 15px;
+  color: #0b2c4d;
+}
+
+/* STATUS TAG */
+.status-tag {
+  background: #dc3545;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* TABLE WRAPPER */
+.table-wrapper {
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* TABLE */
+/* ================= TABLE BASE ================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  font-size: 13px;
+}
+
+table thead {
+  background: #0b2c4d;
+  color: #fff;
+}
+
+table th,
+table td {
+  padding: 8px 10px;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ================= ROW HOVER ================= */
+table tbody tr:hover {
+  background: #f1f6ff;
+}
+
+/* ================= SELECTED ROW ================= */
+.selected,
+.selected-row {
+  background: #dbe9ff !important;
+  font-weight: 600;
+}
+
+/* ================= VENDOR BADGE LOOK ================= */
+.count-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.badge-working {
+  background: rgb(64, 148, 184);
+  color: #fff;
+}
+
+.badge-not-working {
+  background: #dc3545;
+  color: #fff;
+}
+
+.count-badge:hover {
+  transform: scale(1.08);
+  opacity: 0.9;
+}
+
+/* ================= ACTIVE BADGE ================= */
+.count-badge.active {
+  box-shadow: 0 0 0 2px #00000030;
+}
+
+/* ================= BOTTOM PANEL TABLE ================= */
+.map-bottom-panel {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+}
+
+.panel-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  padding: 8px;
+  width: 100%;
+  overflow: scroll;
+}
+
+/* ================= SCROLL FIX ================= */
+.table-wrapper {
+  max-height: 300px;
+  overflow: scroll;
+}
+
+
+/* PIE CHART AND THEIR ANIMATION */
+
+.card-pie {
+  height: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pieChart {
+  width: 220px !important;
+  height: 220px !important;
+}
+/* @keyframes blinkGreen {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+} */
+
+@keyframes blinkRed {
+  0% { opacity: 1; }
+  50% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
+/* .blink-green {
+  animation: blinkGreen 1s infinite;
+} */
+
+.blink-red {
+  animation: blinkRed 1s infinite;
+}
+
+
+/* ===== CLICKABLE COUNT BADGES VENDER TABLE ===== */
+
+.count-badge {
+  display: inline-block;
+  min-width: 40px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.badge-working {
+  background: rgb(64, 148, 184);
+  color: #fff;
+}
+
+.badge-not-working {
+  background: #dc3545;
+  color: #fff;
+}
+
+
+.count-badge:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  cursor: pointer;
+}
+
+.count-badge.active {
+  outline: 2px solid #000;
+}
+
+
+/* District / Block selected row */
+#districtTable tbody tr {
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+#districtTable tbody tr:hover {
+  background: #f1f5fb;
+}
+
+/* SELECTED ROW */
+#districtTable tbody tr.selected {
+  background: linear-gradient(90deg, #0b2c4d, #134b7f);
+  color:#134b7f ;
+  font-weight: bold;
+}
+
+#districtTable tbody tr.selected td {
+  border-color: rgba(255,255,255,0.3);
+}
+
+.hidden-col {
+  display: none;
+}
+
+
+

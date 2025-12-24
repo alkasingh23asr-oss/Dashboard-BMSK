@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>BMSK Station Dashboard</title>
+
+  <!-- Leaflet & Chart -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="../static/css/style.css">
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <div class="navbar">
+    <div class="navElement">
+      <div class="logo_bmsk"><img src="../static/image/image.png"></div>
+      <div class="navHead">BIHAR MAUSAM SEWA KENDRA </div>
+      <br><h6 class="station_dash_head">STATION DASHBOARD</h6>
+      <div class="logo_bihar"><img src="../static/image/image1.png"></div>
+    </div>
+  </div>
+
+  <!-- ================= DASHBOARD ================= -->
+  <div class="dashboard">
+
+    <!-- MAP -->
+    <div class="card">
+      <div class="map-strip">
+
+        <select id="statusFilter">
+          <option value="ALL">All</option>
+          <option value="NON-WORKING">Not Working</option>
+          <option value="WORKING">Working</option>
+          
+        </select>
+        <button id="awsBtn" class="btn-primary">AWS</button>
+        <button id="argBtn" class="btn-outline">ARG</button>
+        <input type="date" id="datePicker">
+      </div>
+      <div id="map"></div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="card top-controls">
+
+
+
+      <div class="summary">
+        <div class="summary-box bg-success">
+          <h4>WORKING : <span id="working">0</span></h4>
+        </div>
+        <div class="summary-box bg-danger">
+          <h4>NOT WORKING : <span id="notWorking">0</span></h4>
+        </div>
+      </div>
+
+      <!-- PIE -->
+      <div class="card-pie">
+        <canvas id="pieChart"></canvas>
+      </div>
+
+      <!-- VENDOR TABLE -->
+      <div class="card">
+        <h3 style="text-align:center">Vendor Station Summary</h3>
+        <table id="vendorTable">
+          <thead>
+            <tr>
+              <th>Vendor</th>
+              <th>Total</th>
+              <th>Working</th>
+              <th>Not Working</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= BOTTOM PANEL ================= -->
+  <div class="map-bottom-panel" id="bottomPanel" style="display:none;">
+
+    <!-- DISTRICT -->
+    <div class="panel-card">
+      <div class="panel-header">
+        <h4>District Summary</h4>
+        <span id="districtStatusTag"></span>
+      </div>
+      <table id="districtTable">
+        <thead>
+          <tr>
+            <th>District</th>
+            <th>Total</th>
+            <th>Agency</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- BLOCK -->
+    <div class="panel-card" id="blockPanel" style="display:none;">
+      <div class="panel-header">
+        <h4>Block Detail</h4>
+      </div>
+      <table id="blockTable">
+        <thead>
+          <tr>
+            <th data-col="block">Block</th>
+            <th data-col="station_id">Station ID</th>
+            <th data-col="temp_rh">Temp.RH</th>
+            <th data-col="rf">RF</th>
+            <th data-col="ws">WS</th>
+            <th data-col="ap">AP</th>
+            <th data-col="sm">SM</th>
+            <th data-col="sr">SR</th>
+            <th data-col="data_pkt">Data_PKT</th>
+            <th data-col="agency">Agency</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="../static/script/script.js"></script>
+</body>
+
+</html>
