@@ -28,6 +28,29 @@ body {
     justify-content: space-between;
 }
 
+.sub-header {
+    width: 100%;
+    background: #f4f6f8;
+    text-align: center;
+    padding: 12px 10px;
+    border-bottom: 1px solid #dcdcdc;
+}
+
+.sub-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #134b7f;
+    letter-spacing: 0.5px;
+}
+
+.sub-header p {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #555;
+}
+
+
 /* Logos */
 .logo_bihar img,
 .logo_bmsk img {
@@ -56,14 +79,7 @@ body {
     text-transform: uppercase;
     white-space: nowrap;
 }
-.station_dash_head{
-     position: relative;
-    left: -13rem;
-    right: 18rem;
-    top: 1.5rem;
-    color: white;
-    font-size: 1rem;
-}
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -94,7 +110,7 @@ body {
     border-radius: 10px;
     padding: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
-    height: 85vh;
+    height: 75vh;
 }
 
 .card-pie {
@@ -111,7 +127,7 @@ body {
 
 /* ================= MAP ================= */
 #map {
-    height: 77vh;
+    height: 65vh;
     border-radius: 10px;
 }
 
@@ -539,4 +555,15 @@ table tbody tr:hover {
 }
 
 
+.print-btn {
+  background: #0b2c4d;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.print-btn:hover {
+  background: #09335c;
+}
 

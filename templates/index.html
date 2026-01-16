@@ -21,10 +21,15 @@
     <div class="navElement">
       <div class="logo_bmsk"><img src="../static/image/image.png"></div>
       <div class="navHead">BIHAR MAUSAM SEWA KENDRA </div>
-      <br><h6 class="station_dash_head">STATION DASHBOARD</h6>
       <div class="logo_bihar"><img src="../static/image/image1.png"></div>
     </div>
   </div>
+  <!-- Sub Heading -->
+<div class="sub-header">
+  <h2>BMSK AWS / ARG Station Monitoring Dashboard</h2>
+  <p>Real-Time & Historical Fault Status of Weather Stations</p>
+</div>
+
 
   <!-- ================= DASHBOARD ================= -->
   <div class="dashboard">
@@ -90,8 +95,11 @@
     <!-- DISTRICT -->
     <div class="panel-card">
       <div class="panel-header">
-        <h4>District Summary</h4>
+        <h4>District-Wise Not Working</h4>
         <span id="districtStatusTag"></span>
+        <button class="print-btn" onclick="printBlockReport()">
+          🖨 Print
+        </button>
       </div>
       <table id="districtTable">
         <thead>
@@ -108,7 +116,7 @@
     <!-- BLOCK -->
     <div class="panel-card" id="blockPanel" style="display:none;">
       <div class="panel-header">
-        <h4>Block Detail</h4>
+        <h4>Block-Wise Not Working</h4>
       </div>
       <table id="blockTable">
         <thead>
@@ -128,10 +136,9 @@
         <tbody></tbody>
       </table>
     </div>
-
   </div>
-
   <script src="../static/script/script.js"></script>
+
 </body>
 
 </html>

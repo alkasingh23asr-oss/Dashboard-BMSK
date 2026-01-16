@@ -2,6 +2,10 @@ let currentType = "AWS";
 let map = L.map("map").setView([25.8727, 85.9162], 8);
 let markers = [];
 let pieChart = null;
+let selectedDistrict = null;
+let selectedVendor = null;
+
+
 
 datePicker.value = new Date().toISOString().split("T")[0];
 
@@ -148,7 +152,6 @@ function resetDistrictBlock() {
   document.getElementById("districtStatusTag").innerText = "";
 }
 
-
 document.querySelector("#vendorTable").onclick = (e) => {
   const badge = e.target.closest(".count-badge");
   if (!badge) return;
@@ -190,17 +193,117 @@ function highlightSelectedRow(tableId, row) {
   row.classList.add("selected");
 }
 
+// function loadDistrict(vendor, status) {
+//   const blockPanel = document.getElementById("blockPanel");
+
+//   // clear old block data
+//   document.querySelector("#blockTable tbody").innerHTML = "";
+
+//   if (status === "WORKING") {
+//     blockPanel.style.display = "none";
+//   } else {
+//     blockPanel.style.display = "block";
+//   }
+
+//   fetch(
+//     `/api/vendor-district-summary?type=${currentType}&date=${datePicker.value}&vendor=${vendor}&status=${status}`
+//   )
+//     .then((r) => r.json())
+//     .then((data) => {
+//       const tbody = document.querySelector("#districtTable tbody");
+//       tbody.innerHTML = "";
+
+//       data.forEach((d, i) => {
+//         const tr = document.createElement("tr");
+
+//         tr.innerHTML = `
+//           <td>${d.district}</td>
+//           <td>${d.total}</td>
+//           <td>${d.agency}</td>
+//         `;
+
+//         tr.onclick = () => {
+//           highlightSelectedRow("districtTable", tr);
+
+//           // ✅ Only NON-WORKING loads block fault
+//           if (status === "NON-WORKING") {
+//             loadBlockFault(vendor, d.district);
+//           }
+//         };
+
+//         tbody.appendChild(tr);
+
+//         // ✅ Auto select first district
+//         if (i === 0) {
+//           highlightSelectedRow("districtTable", tr);
+
+//           if (status === "NON-WORKING") {
+//             loadBlockFault(vendor, d.district);
+//           }
+//         }
+//       });
+//     });
+// }
+
+// function loadDistrict(vendor, status) {
+//   const blockPanel = document.getElementById("blockPanel");
+
+//   // clear old block data
+//   document.querySelector("#blockTable tbody").innerHTML = "";
+
+//   blockPanel.style.display = status === "WORKING" ? "none" : "block";
+
+//   fetch(
+//     `/api/vendor-district-summary?type=${currentType}&date=${datePicker.value}&vendor=${vendor}&status=${status}`
+//   )
+//     .then((r) => r.json())
+//     .then((data) => {
+//       const tbody = document.querySelector("#districtTable tbody");
+//       tbody.innerHTML = "";
+
+//       data.forEach((d, i) => {
+//         const tr = document.createElement("tr");
+
+//         // ✅ Clear & meaningful total display
+//         tr.innerHTML = `
+//           <td>${d.district}</td>
+//           <td>
+//             <b>Total:</b> ${d.total_installed}<br>
+//             <span style="color:green">✔ Working:</span> ${d.working}<br>
+//             <span style="color:red">✖ Non-Working:</span> ${d.non_working}
+//           </td>
+//           <td>${d.agency}</td>
+//         `;
+
+//         tr.onclick = () => {
+//           highlightSelectedRow("districtTable", tr);
+
+//           if (status === "NON-WORKING") {
+//             loadBlockFault(vendor, d.district);
+//           }
+//         };
+
+//         tbody.appendChild(tr);
+
+//         // ✅ Auto select first row
+//         if (i === 0) {
+//           highlightSelectedRow("districtTable", tr);
+//           if (status === "NON-WORKING") {
+//             loadBlockFault(vendor, d.district);
+//           }
+//         }
+//       });
+//     });
+// }
+
 function loadDistrict(vendor, status) {
   const blockPanel = document.getElementById("blockPanel");
+  selectedVendor = vendor;
 
   // clear old block data
   document.querySelector("#blockTable tbody").innerHTML = "";
 
-  if (status === "WORKING") {
-    blockPanel.style.display = "none";
-  } else {
-    blockPanel.style.display = "block";
-  }
+  blockPanel.style.display = status === "WORKING" ? "none" : "block";
 
   fetch(
     `/api/vendor-district-summary?type=${currentType}&date=${datePicker.value}&vendor=${vendor}&status=${status}`
@@ -215,14 +318,21 @@ function loadDistrict(vendor, status) {
 
         tr.innerHTML = `
           <td>${d.district}</td>
-          <td>${d.total}</td>
+          <td>
+            <b>Total:</b> ${d.total_installed}<br>
+            <span style="color:green">✔ Working:</span> ${d.working}<br>
+            <span style="color:red">✖ Non-Working:</span> ${d.non_working}
+          </td>
           <td>${d.agency}</td>
         `;
 
         tr.onclick = () => {
           highlightSelectedRow("districtTable", tr);
 
-          // ✅ Only NON-WORKING loads block fault
+          // store selected district
+          selectedDistrict = d.district;
+
+          // load block fault only for NON-WORKING
           if (status === "NON-WORKING") {
             loadBlockFault(vendor, d.district);
           }
@@ -230,9 +340,10 @@ function loadDistrict(vendor, status) {
 
         tbody.appendChild(tr);
 
-        // ✅ Auto select first district
+        // Auto select first district
         if (i === 0) {
           highlightSelectedRow("districtTable", tr);
+          selectedDistrict = d.district;
 
           if (status === "NON-WORKING") {
             loadBlockFault(vendor, d.district);
@@ -240,6 +351,111 @@ function loadDistrict(vendor, status) {
         }
       });
     });
+}
+
+function printBlockReport() {
+  if (!selectedDistrict) {
+    alert("Please select a district first!");
+    return;
+  }
+
+  const blockTableHTML = document.getElementById("blockTable").outerHTML;
+  const reportDate = datePicker.value; // yyyy-mm-dd
+  const reportType = currentType; // ARG / AWS
+  const reportAgency = selectedVendor;
+
+  const printWindow = window.open("", "", "width=900,height=650");
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>${reportType}_${reportAgency}_${selectedDistrict}_${reportDate} Report</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+          }
+
+          .navbar {
+                  width: 100%;
+                  height: 70px;
+                  background: linear-gradient(90deg, #0097b2, #134b7f);
+                  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  position: sticky;
+                  top: 0;
+                  z-index: 1000;
+          }
+          .navElement {
+                  width: 98%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+          }
+          .logo_bihar img,.logo_bmsk img {
+                  height: 45px;
+                  width: auto;
+                  border-radius: 2px;
+          }
+
+          .logo_bihar {
+              margin-right: 15px;
+          }
+
+          .logo_bmsk {
+              margin-right: 15px;
+          }
+          h2{
+            text-align: center;
+            margin: 5px 0;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+          }
+          th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+          }
+          th {
+            background: #f2f2f2;
+          }
+          .meta{
+             display: flex;
+             align-items: center;
+             justify-content: space-between;
+          }
+        </style>
+        
+      </head>
+      <body>
+        <div class="navbar">
+          <div class="navElement">
+            <div class="logo_bmsk"><img src="../static/image/image.png"></div>
+            <div class="navHead">BIHAR MAUSAM SEWA KENDRA </div>
+            <div class="logo_bihar"><img src="../static/image/image1.png"></div>
+          </div>
+        </div>
+        <h2>District Block-wise Fault Report</h2>
+        <div class="meta">
+          <b>Type: ${reportType}</b>
+          <h4>District: ${selectedDistrict}</h4>
+          <h4>Vender Name: ${reportAgency}</h4>
+          <b>Date: ${reportDate} </b>
+        </div>
+        
+        ${blockTableHTML}
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
 }
 
 /* ================= BLOCK FAULT ================= */
@@ -274,38 +490,77 @@ function toggleBlockColumns(type) {
   });
 }
 
+// function loadBlockFault(vendor, district) {
+//   fetch(
+//     `/api/block-fault?type=${currentType}&date=${datePicker.value}&vendor=${vendor}&district=${district}`
+//   )
+//     .then((r) => r.json())
+//     .then((rows) => {
+//       const tbody = document.querySelector("#blockTable tbody");
+//       tbody.innerHTML = "";
+
+//       rows.forEach((r) => {
+//         const tr = document.createElement("tr");
+
+//         tr.innerHTML = `
+//           <td>${r.block}</td>
+//           <td>${r.station_id}</td>
+//           <td>${r.temp_rh ?? "x"}</td>
+//           <td>${r.rf ?? "x"}</td>
+//           <td>${r.ws ?? "x"}</td>
+//           <td>${r.ap ?? "x"}</td>
+//           <td>${r.sm ?? "x"}</td>
+//           <td>${r.sr ?? "x"}</td>
+//           <td>${r.data_pkt ?? "x"}</td>
+//           <td>${r.agency ?? "x"}</td>
+//         `;
+
+//         tbody.appendChild(tr);
+//       });
+
+//       // ✅ AFTER data load → column visibility control
+//       toggleBlockColumns(currentType);
+//     });
+// }
+
 function loadBlockFault(vendor, district) {
   fetch(
     `/api/block-fault?type=${currentType}&date=${datePicker.value}&vendor=${vendor}&district=${district}`
   )
-    .then((r) => r.json())
-    .then((rows) => {
+    .then(r => r.json())
+    .then(rows => {
+
       const tbody = document.querySelector("#blockTable tbody");
       tbody.innerHTML = "";
 
-      rows.forEach((r) => {
+      rows.forEach(r => {
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
           <td>${r.block}</td>
-          <td>${r.station_id}</td>
-          <td>${r.temp_rh ?? "-"}</td>
-          <td>${r.rf ?? "-"}</td>
-          <td>${r.ws ?? "-"}</td>
-          <td>${r.ap ?? "-"}</td>
-          <td>${r.sm ?? "-"}</td>
-          <td>${r.sr ?? "-"}</td>
-          <td>${r.data_pkt ?? "-"}</td>
-          <td>${r.agency ?? "-"}</td>
+          <td class="station-link" style="cursor:pointer;color:#0b5ed7">
+            ${r.station_id}
+          </td>
+          <td>${r.temp_rh ?? "x"}</td>
+          <td>${r.rf ?? "x"}</td>
+          <td>${r.ws ?? "x"}</td>
+          <td>${r.ap ?? "x"}</td>
+          <td>${r.sm ?? "x"}</td>
+          <td>${r.sr ?? "x"}</td>
+          <td>${r.data_pkt ?? "x"}</td>
+          <td>${r.agency ?? "x"}</td>
         `;
 
         tbody.appendChild(tr);
       });
 
-      // ✅ AFTER data load → column visibility control
       toggleBlockColumns(currentType);
     });
 }
+
+
+
+
 
 /* ================= BUTTON EVENTS ================= */
 awsBtn.onclick = () => {

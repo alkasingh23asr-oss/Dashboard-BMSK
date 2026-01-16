@@ -143,41 +143,107 @@ def vendor_summary():
 
 
 # ================= DISTRICT SUMMARY =================
+# @app.route("/api/vendor-district-summary")
+# def vendor_district_summary():
+#     vendor = request.args.get("vendor")
+#     status = request.args.get("status")
+#     station_type = request.args.get("type")
+#     date = request.args.get("date")
+
+#     if not vendor or not status or not station_type or not date:
+#         return jsonify([])
+
+#     rec_date = datetime.strptime(date, "%Y-%m-%d").strftime("%d-%m-%Y")
+
+#     pipeline = [
+#         {"$match": {
+#             "station_type": station_type,
+#             "recorded_time": rec_date,
+#             "vendor": vendor,
+#             "status": status
+#         }},
+#         {"$group": {
+#             "_id": "$district",
+#             "total": {"$sum": 1},
+#             "agency": {"$first": "$vendor"}
+#         }},
+#         {"$sort": {"total": -1}}
+#     ]
+
+#     return jsonify([
+#         {
+#             "district": r["_id"],
+#             "total": r["total"],
+#             "agency": r["agency"]
+#         }
+#         for r in stations.aggregate(pipeline)
+#     ])
+
+
 @app.route("/api/vendor-district-summary")
 def vendor_district_summary():
     vendor = request.args.get("vendor")
-    status = request.args.get("status")
+    status = request.args.get("status")  # WORKING / NON-WORKING (frontend logic)
     station_type = request.args.get("type")
     date = request.args.get("date")
 
-    if not vendor or not status or not station_type or not date:
+    if not vendor or not station_type or not date:
         return jsonify([])
 
     rec_date = datetime.strptime(date, "%Y-%m-%d").strftime("%d-%m-%Y")
 
     pipeline = [
-        {"$match": {
-            "station_type": station_type,
-            "recorded_time": rec_date,
-            "vendor": vendor,
-            "status": status
-        }},
-        {"$group": {
-            "_id": "$district",
-            "total": {"$sum": 1},
-            "agency": {"$first": "$vendor"}
-        }},
-        {"$sort": {"total": -1}}
+        {
+            "$match": {
+                "station_type": station_type,
+                "recorded_time": rec_date,
+                "vendor": vendor
+            }
+        },
+        {
+            "$group": {
+                "_id": "$district",
+
+                # total installed sensors
+                "total_installed": {"$sum": 1},
+
+                #working count
+                "working": {
+                    "$sum": {
+                        "$cond": [{"$eq": ["$status", "WORKING"]}, 1, 0]
+                    }
+                },
+
+                # non-working count
+                "non_working": {
+                    "$sum": {
+                        "$cond": [{"$eq": ["$status", "NON-WORKING"]}, 1, 0]
+                    }
+                },
+
+                "agency": {"$first": "$vendor"}
+            }
+        },
+        {"$sort": {"total_installed": -1}}
     ]
 
-    return jsonify([
-        {
+    data = []
+    for r in stations.aggregate(pipeline):
+        #  Frontend ke status ke according district dikhana
+        if status == "WORKING" and r["working"] == 0:
+            continue
+        if status == "NON-WORKING" and r["non_working"] == 0:
+            continue
+
+        data.append({
             "district": r["_id"],
-            "total": r["total"],
+            "total_installed": r["total_installed"],
+            "working": r["working"],
+            "non_working": r["non_working"],
             "agency": r["agency"]
-        }
-        for r in stations.aggregate(pipeline)
-    ])
+        })
+
+    return jsonify(data)
 
 
 # ================= BLOCK FAULT =================
@@ -219,6 +285,43 @@ def block_fault():
 
     return jsonify(data)
 
+    station_id = request.args.get("station_id")
+    vendor = request.args.get("vendor")
+    station_type = request.args.get("type")  # AWS / ARG
+
+    if not station_id or not vendor or not station_type:
+        return jsonify([])
+
+    coll = db.station_daily_status
+
+    data = list(
+        coll.aggregate([
+            {
+                "$match": {
+                    "station_id": station_id,
+                    "vendor": vendor,
+                    "station_type": station_type
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "date": "$data_date",
+                    "is_working": {
+                        "$cond": [
+                            { "$eq": ["$status", "WORKING"] },
+                            1,
+                            0
+                        ]
+                    }
+                }
+            },
+            { "$sort": { "date": 1 } }
+        ])
+    )
+
+    return jsonify(data)
+
 
 # ================= RUN =================
 if __name__ == "__main__":
@@ -234,4 +337,4 @@ if __name__ == "__main__":
     scheduler.start()
 
     atexit.register(lambda: scheduler.shutdown())
-    app.run(debug=False)
+    app.run(debug=True, port=8080)
